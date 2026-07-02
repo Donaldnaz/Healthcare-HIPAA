@@ -122,7 +122,6 @@ Healthcare Compliance/
 │   ├── deploy.sh
 │   └── destroy.sh
 └── terraform/                ← Infrastructure as Code
-    ├── README.md             ← Technical deployment guide
     ├── modules/
     │   ├── kms/ sns/ iam/ eventbridge/
     │   └── lambda/           ← TypeScript remediation handler (src/index.ts)
