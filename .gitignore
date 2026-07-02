@@ -1,0 +1,22 @@
+# Terraform
+**/.terraform/
+*.tfstate
+*.tfstate.*
+*.tfplan
+crash.log
+crash.*.log
+
+# Lambda build artifacts
+terraform/modules/lambda/node_modules/
+terraform/modules/lambda/dist/
+terraform/modules/lambda/build/
+terraform/modules/lambda/src/
+
+# Secrets — never commit
+terraform/environments/dev/terraform.tfvars
+.env
+.env.*
+
+# OS
+.DS_Store
+Thumbs.db

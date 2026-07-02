@@ -1,0 +1,13 @@
+# Example variable values — copy to terraform.tfvars and customize.
+
+aws_region   = "us-east-1"
+project_name = "hcp-compliance"
+environment  = "dev"
+
+# Optional: Slack incoming webhook URL for security alerts.
+# slack_webhook_url = "https://example.com/replace-with-your-slack-incoming-webhook"
+
+log_retention_days = 90
+
+# Optional: set to cap concurrent executions (requires sufficient account concurrency).
+# reserved_concurrent_executions = 10

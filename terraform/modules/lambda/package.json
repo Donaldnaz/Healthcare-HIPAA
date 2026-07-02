@@ -1,0 +1,20 @@
+{
+  "name": "s3-remediation-lambda",
+  "version": "1.0.0",
+  "private": true,
+  "description": "S3 public access auto-remediation Lambda (compiled before terraform apply)",
+  "scripts": {
+    "build": "esbuild src/index.ts --bundle --platform=node --target=node20 --outfile=dist/index.js",
+    "clean": "rm -rf dist build"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.750.0",
+    "@aws-sdk/client-sns": "^3.750.0"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.147",
+    "@types/node": "^22.13.10",
+    "esbuild": "^0.25.1",
+    "typescript": "^5.8.2"
+  }
+}
