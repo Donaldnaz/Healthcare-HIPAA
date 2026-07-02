@@ -25,9 +25,11 @@ This system acts like a **24/7 security guard** that watches for that mistake th
 
 ---
 
-## Architecture at a glance
+## Architecture
 
 ![Healthcare S3 Guard architecture diagram](docs/architecture-diagram.png)
+
+<img width="1920" height="1080" alt="Screenshot 2026-07-02 at 12 15 57 AM" src="https://github.com/user-attachments/assets/d5ffec37-9bc4-4c47-b7e3-c6d41fdc7a81" />
 
 ---
 
