@@ -12,6 +12,17 @@ One of the most common and dangerous mistakes in the cloud is accidentally makin
 
 This system acts like a **24/7 security guard** that watches for that mistake the moment it happens, fixes it within seconds, and alerts your team on Slack.
 
+## Tech stack
+
+| Layer | Technology |
+|-------|------------|
+| Infrastructure | **Terraform** (modular AWS IaC) |
+| Remediation logic | **TypeScript** on **AWS Lambda** (Node.js 20) |
+| Event routing | **CloudTrail** + **Amazon EventBridge** |
+| Alerting | **Amazon SNS** + **Slack** incoming webhook |
+| Encryption | **AWS KMS** |
+| Audit logs | **Amazon CloudWatch Logs** |
+
 ---
 
 ## Architecture at a glance
@@ -20,7 +31,7 @@ This system acts like a **24/7 security guard** that watches for that mistake th
 
 ---
 
-## The problem in plain English
+## The problem
 
 Imagine a hospital stores patient records in a digital filing cabinet (an S3 bucket). A well-meaning engineer creates a new cabinet but forgets to lock it. Without this system:
 
@@ -34,38 +45,6 @@ Traditional compliance tools (like monthly audits or daily scans) are like **nig
 ## How this solution works
 
 This stack uses an **event-driven** pattern — it reacts the instant something risky happens, not hours later.
-
-```mermaid
-flowchart TB
-  subgraph people [Your Team]
-    Engineer[Engineer or Admin]
-    Compliance[Compliance Officer]
-    SlackChannel[Slack Alert Channel]
-  end
-
-  subgraph aws [AWS Cloud - HIPAA Guardrails]
-    S3[(S3 Storage Bucket\nPatient Data / PHI)]
-    CloudTrail[CloudTrail\nActivity Recorder]
-    EventBridge[EventBridge\nInstant Alert Router]
-    Lambda[Auto-Remediation Lambda\nSecurity Guard Bot]
-    SNS[SNS Alert Topic\nEncrypted Notifications]
-    KMS[KMS Encryption Key]
-    Logs[CloudWatch Logs\nAudit Trail]
-  end
-
-  Engineer -->|"Creates bucket or\nchanges access (ACL)"| S3
-  S3 --> CloudTrail
-  CloudTrail -->|"CreateBucket or\nPutBucketAcl event"| EventBridge
-  EventBridge -->|"Triggers within seconds"| Lambda
-  Lambda -->|"1. Checks if bucket is public"| S3
-  Lambda -->|"2. Locks bucket automatically"| S3
-  Lambda --> SNS
-  Lambda --> SlackChannel
-  Lambda --> Logs
-  SNS -.->|"Encrypted at rest"| KMS
-  Lambda -.->|"Encrypted secrets"| KMS
-  Compliance -->|"Reviews audit logs"| Logs
-```
 
 ### Step by step (non-technical)
 
@@ -89,25 +68,6 @@ HIPAA's **Security Rule** requires covered entities to implement safeguards that
 | **Audit controls** | CloudWatch logs record every detection and remediation |
 | **Integrity** | Auto-remediation restores secure configuration immediately |
 | **Transmission/security** | KMS encrypts alerts and Lambda secrets at rest |
-
-### Event-driven vs. scheduled scanning
-
-```mermaid
-flowchart LR
-  subgraph scheduled [Traditional Scheduled Scanner]
-    ScanRun[Scan runs once per day]
-    Gap[Exposure window:\nhours to days]
-    FindIssue[Issue found later]
-    ScanRun --> Gap --> FindIssue
-  end
-
-  subgraph eventDriven [This Event-Driven Guard]
-    ApiCall[Risky S3 API call]
-    Instant[Guard reacts in seconds]
-    Fixed[Bucket locked + team alerted]
-    ApiCall --> Instant --> Fixed
-  end
-```
 
 **Scheduled scanners** (AWS Config, Security Hub, third-party tools) are still valuable for broad posture checks. This project **complements** them by closing the gap between "something went wrong" and "someone noticed."
 
@@ -135,13 +95,6 @@ A full editable architecture diagram is available for compliance presentations a
 - **Editable file:** [`docs/healthcare-s3-remediation-architecture.drawio`](docs/healthcare-s3-remediation-architecture.drawio)
 - **Visual export:** [`docs/architecture-diagram.png`](docs/architecture-diagram.png)
 
-### Import into Lucidchart
-
-1. Open [Lucidchart](https://www.lucidchart.com/)
-2. **File → Import →** upload `docs/healthcare-s3-remediation-architecture.drawio`
-   - Alternatively, open the file at [diagrams.net](https://app.diagrams.net/) and export as PNG/SVG for Lucidchart
-3. Customize colors, add your org logo, or annotate with your AWS account details for auditor walkthroughs
-
 ---
 
 ## Quick start (technical)
@@ -151,19 +104,6 @@ chmod +x scripts/deploy.sh scripts/destroy.sh
 cp terraform/environments/dev/terraform.tfvars.example terraform/environments/dev/terraform.tfvars
 # Edit terraform.tfvars — set slack_webhook_url
 ./scripts/deploy.sh
-```
-
-Full deployment details: [`terraform/README.md`](terraform/README.md)
-
----
-
-## Testing that it works
-
-After deployment, creating a test S3 bucket without public-access blocks should trigger remediation and a Slack alert within seconds (requires CloudTrail logging enabled).
-
-```bash
-export AWS_REGION=us-east-1
-aws logs tail /aws/lambda/hcp-compliance-dev-s3-remediation-lambda --follow
 ```
 
 ---
@@ -181,7 +121,9 @@ Healthcare Compliance/
 │   └── destroy.sh
 └── terraform/                ← Infrastructure as Code
     ├── README.md             ← Technical deployment guide
-    ├── modules/              ← kms, sns, iam, lambda, eventbridge
+    ├── modules/
+    │   ├── kms/ sns/ iam/ eventbridge/
+    │   └── lambda/           ← TypeScript remediation handler (src/index.ts)
     └── environments/dev/
 ```
 

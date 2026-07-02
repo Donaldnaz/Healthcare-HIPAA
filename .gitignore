@@ -10,7 +10,6 @@ crash.*.log
 terraform/modules/lambda/node_modules/
 terraform/modules/lambda/dist/
 terraform/modules/lambda/build/
-terraform/modules/lambda/src/
 
 # Secrets — never commit
 terraform/environments/dev/terraform.tfvars

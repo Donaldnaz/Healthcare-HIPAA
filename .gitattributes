@@ -1,0 +1,5 @@
+# GitHub Linguist — ensure TypeScript Lambda source is counted correctly
+terraform/modules/lambda/src/** linguist-language=TypeScript
+terraform/modules/lambda/dist/** linguist-generated=true
+terraform/modules/lambda/build/** linguist-generated=true
+terraform/modules/lambda/node_modules/** linguist-vendored=true

@@ -2,6 +2,8 @@
 
 Technical reference for deploying the HIPAA-oriented S3 auto-remediation stack. For a plain-language healthcare overview, see the [project README](../README.md).
 
+**Languages:** Terraform (HCL) + **TypeScript** (Lambda remediation handler in [`modules/lambda/src/index.ts`](modules/lambda/src/index.ts))
+
 ---
 
 ## Architecture
@@ -130,7 +132,7 @@ terraform/modules/
 ├── kms/          # CMK for SNS, Lambda env vars, and CloudWatch Logs
 ├── sns/          # Encrypted alert topic (extensible)
 ├── iam/          # Least-privilege Lambda execution role
-├── lambda/       # TypeScript remediation + Slack notifier
+├── lambda/       # TypeScript remediation + Slack notifier (src/index.ts)
 └── eventbridge/  # CloudTrail event rule + invoke permission
 ```
 
